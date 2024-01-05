@@ -1,0 +1,11 @@
+﻿{
+  "profiles": {
+    "Game": {
+      "commandName": "Executable",
+      "workingDirectory": "D:/Flax/Projects/FlaxProcTerrain",
+      "executablePath": "D:/Flax/Flax_1.7/Binaries/Editor/Win64/Development/FlaxEditor.exe",
+      "commandLineArgs": "-project \"D:/Flax/Projects/FlaxProcTerrain\"",
+      "nativeDebugging": false
+    }
+  }
+}
