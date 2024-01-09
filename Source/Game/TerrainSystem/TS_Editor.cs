@@ -1,5 +1,5 @@
 ﻿using FlaxEngine;
-using Newtonsoft.Json.Linq;
+using System;
 using FlaxEngine.GUI;
 
 
@@ -15,12 +15,12 @@ namespace TerrainSystem
     public class TS_Editor : GenericEditor
     {
         // these statics are here to remember settings that have changed AND been applied
-        // they aren't saved between seesions, so if you find some you really like, write them down.
+        // they aren't saved between sessions, so if you find some you really like, write them down.
         private static float sRuggedFactor = 7;
         private static float sMaxHeight = 36000;
         private static float sBoundaryHeight = -2000;
         private static float sFractionOfMaxHeights = 0.12f;
-        private static int sSeed = 7;
+        private static int sSeed = 1;
 
         private static int sOctaves = 8;
         private static float sNoiseHeight = 1500;
@@ -43,11 +43,12 @@ namespace TerrainSystem
             base.Initialize(layout);
             Terrain terrain = (Terrain)this.Values[0];
             SetTerrainMaterial(terrain);
+            SetDefaultValues(terrain);
 
             layout.Label("Procedural Terrain", TextAlignment.Near);
             layout.Space(10);
 
-            Int2 patchArrayDims = TS_Util.GetPatchArrayDims(ref terrain);
+            Int2 patchArrayDims = TS_Utility.GetPatchArrayDims(ref terrain);
             int patchCount = (patchArrayDims.X + 1) * (patchArrayDims.Y + 1);
 
             FloatValueElement maxHeight = layout.FloatValue("Max Height", "Float value (cm) for the highest peak in the terrain.");
@@ -165,6 +166,16 @@ namespace TerrainSystem
         {
             Material material = Content.LoadAsync<Material>("Content/Materials/TerrainSystem/AutoTerrain.Flax");
             terrain.Material = material;
+        }
+
+        private static void SetDefaultValues(Terrain terrain)
+        {
+            const int singlePatchDefaultEdge = 509;
+            Int2 patchArrayDims = TS_Utility.GetPatchArrayDims(ref terrain);
+            int heightMapEdgeLength = terrain.ChunkSize * Terrain.PatchEdgeChunksCount + 1;
+            int terrainSmallestEdge = Math.Min((patchArrayDims.X + 1) * heightMapEdgeLength, (patchArrayDims.Y + 1) * heightMapEdgeLength);
+
+            sMaxHeight = terrainSmallestEdge / singlePatchDefaultEdge * 7200;
         }
 
     }

@@ -2,18 +2,31 @@
 
 namespace TerrainSystem
 {
-    public class TS_SeaFloor(Terrain _terrain, float boundaryHeight, bool distantSeaFloor, bool waterVFX, bool seaPlane) : Script
+    public class TS_SeaFloor : Script
     {
-        private Terrain terrain = _terrain;
-        private readonly float seaFloorLevel = boundaryHeight;
+        private Terrain terrain;
+        private readonly float boundaryHeight;
+        private readonly bool distantSeaFloor;
+        private readonly bool waterVFX;
+        private readonly bool seaPlane;
+
+        public TS_SeaFloor(Terrain _terrain, float _boundaryHeight, bool _distantSeaFloor, bool _waterVFX, bool _seaPlane)
+        {
+            terrain = _terrain;
+            boundaryHeight = _boundaryHeight;
+            distantSeaFloor = _distantSeaFloor;
+            waterVFX = _waterVFX;
+            seaPlane = _seaPlane;
+        }
+
 
         public void CreateSea()
         {
             DestroyOldSeaObjects();
 
-            float[] fullHM = TS_Util.TerrainToFullHeightMap(ref terrain);
+            float[] fullHM = TS_Utility.TerrainToFullHeightMap(ref terrain);
             CreateBoundary(ref fullHM);
-            TS_Util.FullHeightMapToTerrain(ref fullHM, ref terrain);
+            TS_Utility.FullHeightMapToTerrain(ref fullHM, ref terrain);
 
             if (distantSeaFloor) CreateSeaFloorFar();
             if (waterVFX) CreateWaterPostFX();
@@ -34,17 +47,17 @@ namespace TerrainSystem
 
         private void CreateSeaFloorFar()
         {
-            Int2 fhmDims = TS_Util.GetFHMDims(ref terrain);
+            Int2 fhmDims = TS_Utility.GetFHMDims(ref terrain);
             int heightMapEdgeLength = terrain.ChunkSize * Terrain.PatchEdgeChunksCount + 1;
             float scaleX = (fhmDims.X + 1) * heightMapEdgeLength / 250f;
             float scaleY = (fhmDims.Y + 1) * heightMapEdgeLength / 250f;
-            Vector3 position = TS_Util.GetCentreOfTerrain(ref terrain);
+            Vector3 position = TS_Utility.GetCentreOfTerrain(ref terrain);
 
             StaticModel planeActor = new()
             {
                 Parent = terrain,
                 Name = "SeaBed",
-                Position = new Vector3(position.X, seaFloorLevel, position.Z),
+                Position = new Vector3(position.X, boundaryHeight, position.Z),
                 Rotation = Matrix.RotationX(-3.14f/2),
                 Scale = new Vector3(scaleX, scaleY, 1),
                 Model = Content.LoadAsync<Model>("Content/Materials/TerrainSystem/PlaneCube/TS_Plane.Flax")
@@ -55,11 +68,11 @@ namespace TerrainSystem
 
         private void CreateWater()
         {
-            Int2 fhmDims = TS_Util.GetFHMDims(ref terrain);
+            Int2 fhmDims = TS_Utility.GetFHMDims(ref terrain);
             int heightMapEdgeLength = terrain.ChunkSize * FlaxEngine.Terrain.PatchEdgeChunksCount + 1;
             float scaleX = (fhmDims.X + 1) * heightMapEdgeLength / 250f;
             float scaleY = (fhmDims.Y + 1) * heightMapEdgeLength / 250f;
-            Vector3 position = TS_Util.GetCentreOfTerrain(ref terrain);
+            Vector3 position = TS_Utility.GetCentreOfTerrain(ref terrain);
             StaticModel cubeActor = new()
             {
                 Parent = terrain,
@@ -74,11 +87,11 @@ namespace TerrainSystem
 
         private void CreateWaterPostFX()
         {
-            Int2 fhmDims = TS_Util.GetFHMDims(ref terrain);
+            Int2 fhmDims = TS_Utility.GetFHMDims(ref terrain);
             int heightMapEdgeLength = terrain.ChunkSize * FlaxEngine.Terrain.PatchEdgeChunksCount + 1;
             float scaleX = (fhmDims.X + 1) * heightMapEdgeLength / 2.5f;
             float scaleY = (fhmDims.Y + 1) * heightMapEdgeLength / 2.5f;
-            Vector3 position = TS_Util.GetCentreOfTerrain(ref terrain);
+            Vector3 position = TS_Utility.GetCentreOfTerrain(ref terrain);
             PostFxVolume seaVolume = new()
             {
                 Parent = terrain,
@@ -118,7 +131,7 @@ namespace TerrainSystem
 
         private void CreateBoundary(ref float[] fullHM)
         {
-            Int2 fhmDims = TS_Util.GetFHMDims(ref terrain);
+            Int2 fhmDims = TS_Utility.GetFHMDims(ref terrain);
             int blendOffset = 30;
             float[] blendPoints = new float[blendOffset];
 
@@ -126,26 +139,26 @@ namespace TerrainSystem
             {
                 for (int i = 2; i < blendOffset; i++)
                 {
-                    blendPoints[i] = fullHM[TS_Util.Get1DIndexFrom2D(x, i, fhmDims.X)];
+                    blendPoints[i] = fullHM[TS_Utility.Get1DIndexFrom2D(x, i, fhmDims.X)];
                 }
-                blendPoints[0] = seaFloorLevel;
-                blendPoints[1] = seaFloorLevel;
-                TS_Util.BlendPoints(ref blendPoints);
+                blendPoints[0] = boundaryHeight;
+                blendPoints[1] = boundaryHeight;
+                TS_Utility.BlendPoints(ref blendPoints);
                 for (int i = 0; i < blendOffset; i++)
                 {
-                    fullHM[TS_Util.Get1DIndexFrom2D(x, i, fhmDims.X)] = blendPoints[i];
+                    fullHM[TS_Utility.Get1DIndexFrom2D(x, i, fhmDims.X)] = blendPoints[i];
                 }
 
                 for (int i = 2; i < blendOffset; i++)
                 {
-                    blendPoints[i] = fullHM[TS_Util.Get1DIndexFrom2D(x, fhmDims.Y - i - 1, fhmDims.X)];
+                    blendPoints[i] = fullHM[TS_Utility.Get1DIndexFrom2D(x, fhmDims.Y - i - 1, fhmDims.X)];
                 }
-                blendPoints[0] = seaFloorLevel;
-                blendPoints[1] = seaFloorLevel;
-                TS_Util.BlendPoints(ref blendPoints);
+                blendPoints[0] = boundaryHeight;
+                blendPoints[1] = boundaryHeight;
+                TS_Utility.BlendPoints(ref blendPoints);
                 for (int i = 0; i < blendOffset; i++)
                 {
-                    fullHM[TS_Util.Get1DIndexFrom2D(x, fhmDims.Y - i - 1, fhmDims.X)] = blendPoints[i];
+                    fullHM[TS_Utility.Get1DIndexFrom2D(x, fhmDims.Y - i - 1, fhmDims.X)] = blendPoints[i];
                 }
             }
 
@@ -153,26 +166,26 @@ namespace TerrainSystem
             {
                 for (int i = 2; i < blendOffset; i++)
                 {
-                    blendPoints[i] = fullHM[TS_Util.Get1DIndexFrom2D(i, y, fhmDims.X)];
+                    blendPoints[i] = fullHM[TS_Utility.Get1DIndexFrom2D(i, y, fhmDims.X)];
                 }
-                blendPoints[0] = seaFloorLevel;
-                blendPoints[1] = seaFloorLevel;
-                TS_Util.BlendPoints(ref blendPoints);
+                blendPoints[0] = boundaryHeight;
+                blendPoints[1] = boundaryHeight;
+                TS_Utility.BlendPoints(ref blendPoints);
                 for (int i = 0; i < blendOffset; i++)
                 {
-                    fullHM[TS_Util.Get1DIndexFrom2D(i, y, fhmDims.X)] = blendPoints[i];
+                    fullHM[TS_Utility.Get1DIndexFrom2D(i, y, fhmDims.X)] = blendPoints[i];
                 }
 
                 for (int i = 2; i < blendOffset; i++)
                 {
-                    blendPoints[i] = fullHM[TS_Util.Get1DIndexFrom2D(fhmDims.X - i - 1, y, fhmDims.X)];
+                    blendPoints[i] = fullHM[TS_Utility.Get1DIndexFrom2D(fhmDims.X - i - 1, y, fhmDims.X)];
                 }
-                blendPoints[0] = seaFloorLevel;
-                blendPoints[1] = seaFloorLevel;
-                TS_Util.BlendPoints(ref blendPoints);
+                blendPoints[0] = boundaryHeight;
+                blendPoints[1] = boundaryHeight;
+                TS_Utility.BlendPoints(ref blendPoints);
                 for (int i = 0; i < blendOffset; i++)
                 {
-                    fullHM[TS_Util.Get1DIndexFrom2D(fhmDims.X - i - 1, y, fhmDims.X)] = blendPoints[i];
+                    fullHM[TS_Utility.Get1DIndexFrom2D(fhmDims.X - i - 1, y, fhmDims.X)] = blendPoints[i];
                 }
             }
         }

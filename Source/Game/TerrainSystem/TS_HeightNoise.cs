@@ -3,18 +3,28 @@ using FlaxEngine.Utilities;
 
 namespace TerrainSystem
 {
-    public class TS_HeightNoise(Terrain _terrain, int _octaves = 8, float _noiseHeight = 1500, float _phaseLength = 149, float _persistence = 0.7f) : Script
+    public class TS_HeightNoise : Script
     {
-        private Terrain terrain = _terrain;
-        private readonly int numOctaves = _octaves;
-        private readonly float noiseHeight = _noiseHeight;
-        private readonly float phaseLength = _phaseLength;
-        private readonly float persistence = _persistence;  
+        private Terrain terrain;
+        private readonly int numOctaves;
+        private readonly float noiseHeight;
+        private readonly float phaseLength;
+        private readonly float persistence;
+
+        public TS_HeightNoise(Terrain _terrain, int _octaves, float _noiseHeight, float _phaseLength, float _persistence)
+        {
+            terrain = _terrain;
+            numOctaves = _octaves;
+            noiseHeight = _noiseHeight;
+            phaseLength = _phaseLength;
+            persistence = _persistence;
+        }
+
 
         public void GenerateHeightNoise()
         {
-            float[] fullHM = TS_Util.TerrainToFullHeightMap(ref terrain);
-            Int2 fhmDims = TS_Util.GetFHMDims(ref terrain);
+            float[] fullHM = TS_Utility.TerrainToFullHeightMap(ref terrain);
+            Int2 fhmDims = TS_Utility.GetFHMDims(ref terrain);
             PerlinNoise[] pNoise = new PerlinNoise[numOctaves + 1];
 
             for (int octave = 2; octave <= numOctaves; octave++)
@@ -34,7 +44,7 @@ namespace TerrainSystem
                     fullHM[y * fhmDims.X + x] = noiseValue;
                 }
             }
-            TS_Util.FullHeightMapToTerrain(ref fullHM, ref terrain);
+            TS_Utility.FullHeightMapToTerrain(ref fullHM, ref terrain);
         }
 
     }

@@ -18,7 +18,7 @@ namespace TerrainSystem
         public TS_HeightMap(Terrain _terrain, float _maxHeight = 0, float _boundaryHeight = 0, float _ruggedFactor = 2, float _fractionOfMaxHeights = 0.12f, int _seed = 1)
         {
             terrain = _terrain;
-            patchArrayDims = TS_Util.GetPatchArrayDims(ref terrain);
+            patchArrayDims = TS_Utility.GetPatchArrayDims(ref terrain);
             maxHeight = _maxHeight;
             boundaryHeight = _boundaryHeight;
             ruggedFactor = _ruggedFactor;
@@ -31,7 +31,7 @@ namespace TerrainSystem
             float[] heightSampleMap  = Array.ConvertAll(new float[(patchArrayDims.X + 2) * (patchArrayDims.Y + 2)], v => -1.0f);
             SetHeightSampleMap(ref heightSampleMap);
 
-            float[] fullHM = TS_Util.TerrainToFullHeightMap(ref terrain);
+            float[] fullHM = TS_Utility.TerrainToFullHeightMap(ref terrain);
             float basePhaseLength = CalculateBasePhaseLength();
             ApplyBaseNoise(ref fullHM, ref heightSampleMap, basePhaseLength);
             if (patchArrayDims.X + 1 == 1 || patchArrayDims.Y + 1 == 1)
@@ -41,15 +41,15 @@ namespace TerrainSystem
             else
             {
                 int blendWidth = 30;
-                TS_Util.BlendPatchEdges(ref fullHM, ref terrain, blendWidth);
+                TS_Utility.BlendPatchEdges(ref fullHM, ref terrain, blendWidth);
             }
 
-            TS_Util.FullHeightMapToTerrain(ref fullHM, ref terrain);
+            TS_Utility.FullHeightMapToTerrain(ref fullHM, ref terrain);
         }
 
         private void ScaleSinglePatchMap(ref float[] fullHM)
         {
-            Int2 fhmDims = TS_Util.GetFHMDims(ref terrain);
+            Int2 fhmDims = TS_Utility.GetFHMDims(ref terrain);
             PerlinNoise pNoise = new(0, 150, 0.707f, 1);
             for (int y = 0; y < fhmDims.Y; y++)
             {
@@ -67,14 +67,14 @@ namespace TerrainSystem
             
             for (int x = 0; x < xLength; x++)
             {
-                heightSampleMap[TS_Util.Get1DIndexFrom2D(x, 0, xLength)] = boundaryHeight;
-                heightSampleMap[TS_Util.Get1DIndexFrom2D(x, yLength - 1, xLength)] = boundaryHeight;
+                heightSampleMap[TS_Utility.Get1DIndexFrom2D(x, 0, xLength)] = boundaryHeight;
+                heightSampleMap[TS_Utility.Get1DIndexFrom2D(x, yLength - 1, xLength)] = boundaryHeight;
             }
 
             for (int y = 0; y < yLength; y++)
             {
-                heightSampleMap[TS_Util.Get1DIndexFrom2D(0, y, xLength)] = boundaryHeight;
-                heightSampleMap[TS_Util.Get1DIndexFrom2D(xLength - 1, y, xLength)] = boundaryHeight;
+                heightSampleMap[TS_Utility.Get1DIndexFrom2D(0, y, xLength)] = boundaryHeight;
+                heightSampleMap[TS_Utility.Get1DIndexFrom2D(xLength - 1, y, xLength)] = boundaryHeight;
             }
 
             // if just one patch leave
@@ -100,21 +100,21 @@ namespace TerrainSystem
             while (queue.Count > 0)
             {
                 (int cx, int cy) = queue.Dequeue();
-                if (cx < 1 || cx >= xLength - 1 || cy < 1 || cy >= yLength - 1 || heightSampleMap[TS_Util.Get1DIndexFrom2D(cx, cy, xLength)] != -1f) continue;
+                if (cx < 1 || cx >= xLength - 1 || cy < 1 || cy >= yLength - 1 || heightSampleMap[TS_Utility.Get1DIndexFrom2D(cx, cy, xLength)] != -1f) continue;
 
                 if (maxHeightSet > 0)
                 {
-                    heightSampleMap[TS_Util.Get1DIndexFrom2D(cx, cy, xLength)] = rand.Next((int)maxHeight/2, (int)maxHeight);
+                    heightSampleMap[TS_Utility.Get1DIndexFrom2D(cx, cy, xLength)] = rand.Next((int)maxHeight/2, (int)maxHeight);
                     maxHeightSet--;
                 }
                 else
                 {
-                    heightSampleMap[TS_Util.Get1DIndexFrom2D(cx, cy, xLength)] = 
+                    heightSampleMap[TS_Utility.Get1DIndexFrom2D(cx, cy, xLength)] = 
                         SamplePointValue(
-                            heightSampleMap[TS_Util.Get1DIndexFrom2D(cx - 1, cy, xLength)],
-                            heightSampleMap[TS_Util.Get1DIndexFrom2D(cx + 1, cy, xLength)],
-                            heightSampleMap[TS_Util.Get1DIndexFrom2D(cx, cy - 1, xLength)],
-                            heightSampleMap[TS_Util.Get1DIndexFrom2D(cx, cy + 1, xLength)]
+                            heightSampleMap[TS_Utility.Get1DIndexFrom2D(cx - 1, cy, xLength)],
+                            heightSampleMap[TS_Utility.Get1DIndexFrom2D(cx + 1, cy, xLength)],
+                            heightSampleMap[TS_Utility.Get1DIndexFrom2D(cx, cy - 1, xLength)],
+                            heightSampleMap[TS_Utility.Get1DIndexFrom2D(cx, cy + 1, xLength)]
                             );
                 }
                 queue.Enqueue((cx - 1, cy));
@@ -142,7 +142,7 @@ namespace TerrainSystem
             float scalar;
             int hsmLength_X = patchArrayDims.X + 2;
             int hsmLength_Y = patchArrayDims.Y + 2;
-            Int2 fhmDims = TS_Util.GetFHMDims(ref terrain);
+            Int2 fhmDims = TS_Utility.GetFHMDims(ref terrain);
 
             for (int y = 0; y < fhmDims.Y; y++)
             {
@@ -170,10 +170,10 @@ namespace TerrainSystem
             float hsmSubFrac_X = hsmFloat_X - hsmMin_X;
             float hsmSubFrac_Y = hsmFloat_Y - hsmMin_Y;
 
-            float hsmValue_X1Y1 = heightSampleMap[TS_Util.Get1DIndexFrom2D(hsmMin_X, hsmMin_Y, hsmLength_X)];
-            float hsmValue_X2Y1 = heightSampleMap[TS_Util.Get1DIndexFrom2D(hsmMax_X, hsmMin_Y, hsmLength_X)];
-            float hsmValue_X1Y2 = heightSampleMap[TS_Util.Get1DIndexFrom2D(hsmMin_X, hsmMax_Y, hsmLength_X)];
-            float hsmValue_X2Y2 = heightSampleMap[TS_Util.Get1DIndexFrom2D(hsmMax_X, hsmMax_Y, hsmLength_X)];
+            float hsmValue_X1Y1 = heightSampleMap[TS_Utility.Get1DIndexFrom2D(hsmMin_X, hsmMin_Y, hsmLength_X)];
+            float hsmValue_X2Y1 = heightSampleMap[TS_Utility.Get1DIndexFrom2D(hsmMax_X, hsmMin_Y, hsmLength_X)];
+            float hsmValue_X1Y2 = heightSampleMap[TS_Utility.Get1DIndexFrom2D(hsmMin_X, hsmMax_Y, hsmLength_X)];
+            float hsmValue_X2Y2 = heightSampleMap[TS_Utility.Get1DIndexFrom2D(hsmMax_X, hsmMax_Y, hsmLength_X)];
 
             float hsmValue_Y1Interp = hsmValue_X1Y1 + (hsmValue_X2Y1 - hsmValue_X1Y1) * hsmSubFrac_X;
             float hsmValue_Y2Interp = hsmValue_X1Y2 + (hsmValue_X2Y2 - hsmValue_X1Y2) * hsmSubFrac_X;
@@ -183,7 +183,7 @@ namespace TerrainSystem
 
         private float CalculateBasePhaseLength()
         {
-            Int2 fhmDims = TS_Util.GetFHMDims(ref terrain);
+            Int2 fhmDims = TS_Utility.GetFHMDims(ref terrain);
             return Math.Min(fhmDims.X, fhmDims.Y) / ruggedFactor;
         }
     }

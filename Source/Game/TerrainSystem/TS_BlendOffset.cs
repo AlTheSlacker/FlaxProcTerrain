@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using FlaxEngine;
-using FlaxEngine.Utilities;
+﻿using FlaxEngine;
 
 namespace TerrainSystem;
 
@@ -15,8 +12,8 @@ public class TS_BlendOffset(Terrain _terrain, int _blendWidth) : Script
 
     public void BlendOffset()
     {
-        float[] fullHM = TS_Util.TerrainToFullHeightMap(ref terrain);
-        TS_Util.BlendPatchEdges(ref fullHM, ref terrain, blendWidth);
-        TS_Util.FullHeightMapToTerrain(ref fullHM, ref terrain);
+        float[] fullHM = TS_Utility.TerrainToFullHeightMap(ref terrain);
+        TS_Utility.BlendPatchEdges(ref fullHM, ref terrain, blendWidth);
+        TS_Utility.FullHeightMapToTerrain(ref fullHM, ref terrain);
     }
 }

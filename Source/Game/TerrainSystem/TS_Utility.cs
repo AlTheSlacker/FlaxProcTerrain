@@ -8,7 +8,7 @@ namespace TerrainSystem
     /// <summary>
     /// Terrain System Utilities.
     /// </summary>
-    public static class TS_Util
+    public static class TS_Utility
     {
         /// <summary>
         /// Returns an Int2 for the X Y indexes for an equivalent 2D array.

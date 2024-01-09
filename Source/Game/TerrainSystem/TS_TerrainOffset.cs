@@ -2,16 +2,21 @@
 
 namespace TerrainSystem
 {
-    public class TS_TerrainOffset(Terrain _terrain, float _terrainOffset = 0) : Script
+    public class TS_TerrainOffset : Script
     {
-        private Terrain terrain = _terrain;
-        private readonly float terrainOffset = _terrainOffset;
+        private Terrain terrain;
+        private readonly float terrainOffset;
+
+        public TS_TerrainOffset(Terrain _terrain, float _terrainOffset)
+        {
+            terrain = _terrain;
+            terrainOffset = _terrainOffset;
+        }
 
         public void TerrainOffset()
         {
-
-            Int2 fhmDims = TS_Util.GetFHMDims(ref terrain);
-            float[] fullHM = TS_Util.TerrainToFullHeightMap(ref terrain);
+            Int2 fhmDims = TS_Utility.GetFHMDims(ref terrain);
+            float[] fullHM = TS_Utility.TerrainToFullHeightMap(ref terrain);
             for (int y = 0; y < fhmDims.Y; y++)
             {
                 for (int x = 0; x < fhmDims.X; x++)
@@ -19,7 +24,7 @@ namespace TerrainSystem
                     fullHM[y * fhmDims.X + x] = fullHM[y * fhmDims.X + x] - terrainOffset;
                 }
             }
-            TS_Util.FullHeightMapToTerrain(ref fullHM, ref terrain);
+            TS_Utility.FullHeightMapToTerrain(ref fullHM, ref terrain);
 
             Actor seaBed = terrain.FindActor("SeaBed");
             if (seaBed != null)
