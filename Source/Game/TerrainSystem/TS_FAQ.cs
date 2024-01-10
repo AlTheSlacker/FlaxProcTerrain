@@ -29,31 +29,28 @@ Directory structure:
 ====================
 
 All of the C# code should be under your_project/Source/Game/TerrainSystem
-The rest is under your_project/Content/Materials/TerrainSystem
-cliff-rockface1 <folder> contains the images for the FreePBR material cliff-rockface1
-grassy-meadow1 <folder> contains the images for the FreePBR material grassy-meadow1
-sand1 <folder> contains the images for the FreePBR material sand1
-snowdrift1 <folder> contains the images for the FreePBR material snowdrift1
-PlaneCube <folder> contains copies of the default Flex models (required for direct referencing)
-Noise <folder> used for some tiling reduction in the other material models. NOT used for topology.
-Water <folder> contains the images for the water material model.
-All of the material models then sit directly here: your_project/Source/Game/TerrainSystem
-
+The material data is under your_project/Content/Materials/TerrainSystem
 
 Read this before you waste your time with painful mistakes / bugs.
 ==================================================================
 
+Q. I just opened your project in the editor and there is no scene.
+A. Navigate to Content/SceneData/ and open the TestScene. 
+
 Q. How do I use this?
-A. Using the flax toolbox, select the terrain tab and click "Create new terrain"
-    Set the number of patches to the size of terrain you want, by default, each patch is 509m by 509m
-    Try 5 x 7 and click Create. You now have a sandy square and a "Terrain" object in your scene view.
-    When the "Terrain" object is highlighted, look at the properties in your toolbox.
-    Collapse the General, Transform, Terrain and Collision properties.
-    You can now see the Procedural Terrain tools.
-    Click "Generate Base Height Map"
-    This is the height map trend you will see, now Add Noise to Height Map
-    Create Sea Floor add a distant sea floor, sea surface and water VFX volume, sea level is always y = 0.
-    Offset Terrain 3 times (15m) - this lowers you terrain into the water, allowing a more natural looking shoreline.
+A. If you previously had a terrain and deleted it, please be sure to delete the files in:
+    your_project/Content/SceneData/your_scene/Terrain
+   Using the flax toolbox, select the terrain tab and click "Create new terrain"
+   Set the number of patches to the size of terrain you want, by default, each patch is 509m by 509m
+   Try 5 x 7 and click Create. You now have a sandy square and a "Terrain" object in your scene view.
+   When the "Terrain" object is highlighted, look at the properties in your toolbox.
+   Collapse the General, Transform, Terrain and Collision properties.
+   You can now see the Procedural Terrain tools.
+   Click "Generate Base Height Map"
+   This is the height map trend you will see, now Add Noise to Height Map
+   WAIT: the noise can take a while, but I have never had it crash.
+   Create Sea Floor: Add a distant sea floor, sea surface and water VFX volume, sea level is always y = 0.
+   Offset Terrain 3 times (15m) - this lowers you terrain into the water, allowing a more natural looking shoreline.
 
 Q. My terrain has hideous dents all over it
 A. I think there is something wrong with the auto-LOD system, I found it was much improved by setting the LOD Bias
@@ -71,12 +68,16 @@ A. You need to select a max height appropriate to the size of your terrain:
     As a rough guide try 100-150m max height per 1km of terrain edge length (max height is in cm so x100)
     Don't try and have an 8km high Everest on your 500m single patch terrain.
 
+Q. My single patch terrain just has horrible cliffs all around it.
+A. This isn't designed for making single patch islands, although I will try to improve this if there is
+    enough interest. try making your terrain at least 2x2.
+
 Q. I clicked Add Noise to Height Map a few times and now it is crazy.
 A. Click "Generate Base Height Map" to reset to the base height map.
 
 Q. My island is too square.
-A. Try clicking Terrain Offset a few times to effectively raise the water level, this will flood in and make the
-    coast more interesting. Don't be affraid to submerge a decent amount of terrain to see where it looks like.
+A. Try clicking Terrain Offset a few times to lower the terrain into the sea, this will flood in and make the
+    coast more interesting. Don't be affraid to submerge a decent amount of terrain to see what it looks like.
     Tip: If you make the terrain offset number negative, you can raise your terrain back out of the sea.
 
 Q. Using your awful auto-terrain material, how do I raise/lower the snowline?
@@ -144,6 +145,10 @@ A. Because materials aren't really my thing and I'm hoping someone else will off
 Q. Why is it so dark under the water?
 A. I tried to make it look watery and got a bit bored of fiddling around with it. Send me some better settings.
     If you want to change the default settings, have a look in TS_SeaFloor.cs
+
+Q. Why don't you add a better material model for the water from this forum.
+A. I wanted to keep the material models simple and entirely self-contained so they can be easily replaced. If you
+    have a better one that also meets this criteria, please let me have it and I will update the code.
 
 Q. Why don't you add some progress bars so I know it hasn't crashed?
 A. Laziness: Let me have some code that does it nicely without impacting performance and I'll add it in.
