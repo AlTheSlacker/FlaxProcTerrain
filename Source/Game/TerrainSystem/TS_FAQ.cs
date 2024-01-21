@@ -7,7 +7,7 @@ Important Support Information
 3) If you have a simple, copy-paste solution, to improve this or kill a bug, you may mail it to me:
     alan.55.simmons@gmail.com (thanks!). Please don't hassle me with feature requests.
 4) If you want to chat about this with other users or hold out some wild hope of me getting involved, feel free
-    to post on the Flax forum to: "https://forum.flaxengine.com/t/playing-with-terrain-generation/1473"
+    to post on the Flax forum to: "https://forum.flaxengine.com/t/flaxprocterrain-free-procedural-terrain-tools/1569"
 
 
 A few thank you messages:
