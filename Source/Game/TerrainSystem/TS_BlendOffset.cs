@@ -5,10 +5,16 @@ namespace TerrainSystem;
 /// <summary>
 /// TS_BlendOffset Script.
 /// </summary>
-public class TS_BlendOffset(Terrain _terrain, int _blendWidth) : Script
+public class TS_BlendOffset : Script
 {
-    private Terrain terrain = _terrain;
-    private readonly int blendWidth = _blendWidth;
+    private Terrain terrain;
+    private readonly int blendWidth;
+
+    public TS_BlendOffset(Terrain _terrain, int _blendWidth)
+    {
+        terrain = _terrain;
+        blendWidth = _blendWidth;
+    }
 
     public void BlendOffset()
     {
