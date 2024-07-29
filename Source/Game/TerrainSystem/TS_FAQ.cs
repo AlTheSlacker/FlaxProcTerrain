@@ -90,7 +90,7 @@ A. I've tested a single patch (which is quite limited, but usually OK) and I've 
 Q. I tried to modify the terrain with the Flax tools and now I have cracks in it.
 A. There is a bug in Flax "https://github.com/FlaxEngine/FlaxEngine/issues/817" that causes this when you move the 
     smooth tool over the patch boundaries. This is nothing to do with my TerrainSystem. Hopefully it will be fixed
-    soon.
+    soon. ***UPDATE*** I believe this is fixed as of 1.8, let me know if not.
 
 Q. I didn't read the FAQ first and now I have cracks in my terrain and I really want to fix them.
 A. In case of emergency use the Blend Terrain Patch Edges button. Try small values and work up, the bigger the crack
