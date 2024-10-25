@@ -110,6 +110,8 @@ A. There is a bug in Flax that does not delete this data when the terrain is del
     "https://github.com/FlaxEngine/FlaxEngine/issues/1902" each time you delete your terrain, delete everything in
     that directory manually. If it's annoying for you, imagine how annoying it was for me. Also, I am suspicious 
     that they lead to terrain data corruption, so definitely delete these before creating a new terrain.
+    ***UPDATE*** This should be fixed as of 1.9 although it only purges the unwanted data on an editor restart, so be
+    careful and do it manually if needed.
 
 Q. I want to make my much better terrain materials the default, how do I do that?
 A. Terrain material is auto loaded from TS_Editor.cs, search for SetTerrainMaterial
